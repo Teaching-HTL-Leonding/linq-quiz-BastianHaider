@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace LinqQuiz.Library
 {
@@ -16,7 +17,7 @@ namespace LinqQuiz.Library
         /// </exception>
         public static int[] GetEvenNumbers(int exclusiveUpperLimit)
         {
-            throw new NotImplementedException();
+            return Enumerable.Range(1, exclusiveUpperLimit-1).Where(x => x % 2 == 0).ToArray();
         }
 
         /// <summary>
@@ -33,7 +34,13 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static int[] GetSquares(int exclusiveUpperLimit)
         {
-            throw new NotImplementedException();
+            if (exclusiveUpperLimit < 1) return new int[0];
+            return Math.Pow(exclusiveUpperLimit, 2) > int.MaxValue ? throw new OverflowException() :
+            Enumerable.Range(1, exclusiveUpperLimit - 1)
+                .Where(x => x % 7 == 0)
+                .Select(x=>(x=x*x))
+                .OrderByDescending(x => x)
+                .ToArray();
         }
 
         /// <summary>
@@ -52,7 +59,13 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static FamilySummary[] GetFamilyStatistic(IReadOnlyCollection<IFamily> families)
         {
-            throw new NotImplementedException();
+            return families == null ? throw new ArgumentNullException()
+                : families.Select(x => new FamilySummary()
+                {
+                    FamilyID=x.ID,
+                    NumberOfFamilyMembers=x.Persons.Count,
+                    AverageAge=x.Persons.Count <= 0 ? 0: x.Persons.Average(x=> x.Age)
+                }).ToArray();
         }
 
         /// <summary>
@@ -70,7 +83,11 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static (char letter, int numberOfOccurrences)[] GetLetterStatistic(string text)
         {
-            throw new NotImplementedException();
+            return text.ToUpper()
+                .Where(x => x >= 'A' && x <= 'Z')
+                .GroupBy(x => x)
+                .Select(x => (x.Key, x.Count()))
+                .ToArray();
         }
     }
 }
